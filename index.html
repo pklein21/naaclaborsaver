@@ -673,6 +673,7 @@ $('decodeBtn').onclick = async ()=>{
     document.querySelectorAll('#vehtype .chip').forEach(x=>x.classList.toggle('on',x.dataset.v===v.cls));
     S.veh=v.cls;
     S.vinInfo=v;
+    if($('yYear')){ $('yYear').value=''; $('yMake').value=''; $('yModel').innerHTML='<option value="">Model</option>'; }
     if(S.state) renderBenchmark();
     if(WORKER_URL){ setStatus('<span class="spin"></span>Pulling repair estimates…'); fetchEstimates(vin,v); }
     else setStatus('Vehicle class set. Add a ZIP and search.','ok');
@@ -760,6 +761,8 @@ function parseEstimates(j){
 async function fetchEstimatesYMMT(year,make,model){
   if(!WORKER_URL){ setStatus('Connect the estimate data source (Worker) first.','err'); return; }
   const v={year,make,model};
+  const vc=$('vehcard'); vc.className='vehcard'; vc.innerHTML='';   // clear any prior VIN decode
+  $('vin').value='';
   setStatus('<span class="spin"></span>Pulling repair estimates…');
   try{
     const u=`${WORKER_URL}?year=${encodeURIComponent(year)}&make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}`;
