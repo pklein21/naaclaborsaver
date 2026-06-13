@@ -68,6 +68,15 @@
 
   .controls{display:flex;flex-wrap:wrap;gap:22px;margin-top:18px;align-items:flex-end}
   .ctl{display:flex;flex-direction:column;gap:7px}
+  .ymmt-toggle{margin-top:13px}
+  .ymmt-toggle a{font-size:13px;color:var(--royal);cursor:pointer;font-weight:500}
+  .ymmt-toggle a:hover{color:var(--cyan);text-decoration:underline}
+  .ymmt{display:flex;flex-wrap:wrap;gap:9px;margin-top:11px;align-items:center}
+  .ymmt select,.ymmt input{font-family:'Inter',sans-serif;font-size:13.5px;padding:9px 11px;
+    border:1.5px solid var(--line);border-radius:8px;background:#fbfdff;color:var(--ink)}
+  .ymmt select:focus,.ymmt input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-soft)}
+  #yYear{width:92px}#yMake{min-width:128px}#yModel{min-width:150px;flex:1}#yTrim{width:128px}
+  .ymmt #yGo{padding:9px 18px;font-size:14px}
   .ctl > span{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;
     text-transform:uppercase;color:var(--ink);font-weight:600}
   .chips{display:flex;gap:7px}
@@ -158,6 +167,52 @@
   .empty{padding:40px 18px;text-align:center;color:var(--faint);font-size:14px}
   .empty .em-ic{font-size:30px;margin-bottom:8px;opacity:.4}
 
+  /* Repair estimates */
+  .estcard{margin:0 0 22px}
+  .est-search{font-family:'Inter',sans-serif;font-size:13px;font-weight:400;padding:7px 11px;
+    border:1.5px solid var(--line);border-radius:8px;background:#fbfdff;color:var(--ink);width:190px;max-width:45%}
+  .est-search:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-soft)}
+  .est-head,.est-row{display:grid;grid-template-columns:2.4fr 1fr 1fr 1.1fr;gap:12px;align-items:center}
+  .est-head{padding:10px 18px;border-bottom:1px solid var(--line-soft);
+    font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;
+    letter-spacing:.06em;color:var(--faint)}
+  .est-list{max-height:440px;overflow-y:auto}
+  .est-row{padding:11px 18px;border-bottom:1px solid var(--line-soft);font-size:13.5px}
+  .est-row:last-child{border-bottom:none}
+  .est-name{font-weight:600;color:var(--ink)}
+  .est-c{font-family:'JetBrains Mono',monospace;text-align:right;color:var(--muted);font-size:13px}
+  .est-tot{color:var(--royal);font-weight:600}
+  .est-note{padding:13px 18px;font-size:11.5px;color:var(--faint);line-height:1.5;border-top:1px solid var(--line-soft)}
+  /* claim check */
+  .claim-check{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:14px 18px;
+    background:#fafcfe;border-bottom:1px solid var(--line-soft)}
+  #ccPick{flex:1;min-width:180px;font-family:'Inter',sans-serif;font-size:13.5px;padding:9px 11px;
+    border:1.5px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+  #ccAmt{width:130px;font-family:'JetBrains Mono',monospace;font-size:14px;padding:9px 11px;
+    border:1.5px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+  #ccPick:focus,#ccAmt:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-soft)}
+  .cc-result{display:none;width:100%;font-size:13.5px;padding:10px 13px;border-radius:9px;line-height:1.5}
+  .cc-result.show{display:block}
+  .cc-result .cc-verdict{display:block;font-weight:500}
+  .cc-result .cc-fair,.cc-result .cc-split{color:var(--muted);font-weight:400}
+  .cc-result .cc-fair{display:block;margin-top:3px;font-size:12.5px}
+  .cc-result.neutral{background:#f1f5fa;color:var(--ink)}
+  .cc-result.within{background:#e7f6ef;color:#0f7a52}
+  .cc-result.within .cc-fair{color:#3a8e6e}
+  .cc-result.under{background:#eaf4fc;color:#1568bf}
+  .cc-result.under .cc-fair{color:#5a8bc0}
+  .cc-result.over{background:#fdeceb;color:#c5281c}
+  .cc-result.over .cc-fair{color:#c98a85}
+  .est-row{cursor:pointer}
+  .est-row:hover{background:#fafcfe}
+  @media(max-width:880px){
+    .est-head{display:none}
+    .est-row{grid-template-columns:1fr auto;gap:4px 12px}
+    .est-name{grid-column:1 / -1}
+    .est-c{text-align:left;font-size:12px}
+    .est-c::before{content:attr(data-l);color:var(--faint);margin-right:5px}
+  }
+
   footer{border-top:1px solid var(--line);padding:24px 0 36px;color:var(--muted);font-size:12.5px;line-height:1.6}
   .foot-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:20px}
   .foot-col p{margin:0}
@@ -219,6 +274,17 @@
       </div>
     </div>
 
+    <div class="ymmt-toggle">
+      <a id="ymmtLink" onclick="toggleYmmt()">No VIN? Estimate by year / make / model →</a>
+    </div>
+    <div class="ymmt" id="ymmtBox" style="display:none">
+      <select id="yYear"></select>
+      <select id="yMake"></select>
+      <select id="yModel"><option value="">Model</option></select>
+      <input id="yTrim" type="text" placeholder="Trim (optional)" autocomplete="off">
+      <button class="run ghost" id="yGo" onclick="ymmtGo()">Get estimates</button>
+    </div>
+
     <div class="controls">
       <div class="ctl">
         <span>Search radius</span>
@@ -243,6 +309,24 @@
 
     <div class="vehcard" id="vehcard"></div>
     <div class="status" id="status"></div>
+  </div>
+
+  <div class="card estcard" id="estCard" style="display:none">
+    <h2>
+      <span>Repair cost estimates <span class="loc"><span id="estVeh"></span><span id="estTrim"></span></span></span>
+      <input id="estFilter" class="est-search" type="text" placeholder="Filter repairs…" autocomplete="off"
+        oninput="filterEstimates(this.value)">
+    </h2>
+    <div class="claim-check" id="claimCheck">
+      <select id="ccPick" onchange="compareClaim()"><option value="">Select a repair to check a claim…</option></select>
+      <input id="ccAmt" type="number" inputmode="decimal" min="0" placeholder="Claim $" oninput="compareClaim()">
+      <div id="ccResult" class="cc-result"></div>
+    </div>
+    <div class="est-head">
+      <div>Repair</div><div class="est-c">Parts</div><div class="est-c">Labor</div><div class="est-c">Total</div>
+    </div>
+    <div class="est-list" id="estBody"></div>
+    <div class="est-note">Fair-market parts + labor ranges · mechanical repairs only · national typical (not ZIP-specific). Source: Vehicle Databases.</div>
   </div>
 
   <div class="results" id="results" style="display:none">
@@ -418,6 +502,9 @@ function drawGauge(val){
 /* ============ Shops ============ */
 // Google Maps Platform key — restricted to this site's domain + Places API (New)
 const GOOGLE_KEY = 'AIzaSyAu5fEIkaeNvEj7Nce8UVAAzdi53AFm8-o';
+// Cloudflare Worker proxy URL for Vehicle Databases repair estimates.
+// Leave '' until deployed; paste e.g. 'https://naac-vdb.xxxx.workers.dev'
+const WORKER_URL = 'https://naac-vdb.peter-9fe.workers.dev';
 let SHOP_SOURCE = 'Google Places';
 
 // Exclude collision / auto-body / dent / paint shops — mechanical facilities only
@@ -588,11 +675,144 @@ $('decodeBtn').onclick = async ()=>{
       <span class="badge" style="background:${colors[v.cls]}">${lbl[v.cls]}</span>`;
     document.querySelectorAll('#vehtype .chip').forEach(x=>x.classList.toggle('on',x.dataset.v===v.cls));
     S.veh=v.cls;
-    setStatus('Vehicle class set. Add a ZIP and search.','ok');
+    S.vinInfo=v;
     if(S.state) renderBenchmark();
+    if(WORKER_URL){ setStatus('<span class="spin"></span>Pulling repair estimates…'); fetchEstimates(vin,v); }
+    else setStatus('Vehicle class set. Add a ZIP and search.','ok');
   }catch(e){ setStatus('VIN service unavailable right now. Set the class manually.','err'); }
 };
 $('vin').addEventListener('keydown',e=>{if(e.key==='Enter')$('decodeBtn').click();});
+
+/* ============ Repair estimates (Vehicle Databases via Worker) ============ */
+async function fetchEstimates(vin,v){
+  try{
+    const r=await fetch(`${WORKER_URL}?vin=${encodeURIComponent(vin)}`);
+    const j=await r.json();
+    if(!r.ok||j.error) throw new Error(j.error||('http '+r.status));
+    const items=parseEstimates(j);
+    if(!items.length) throw new Error('no estimate data');
+    renderEstimates(v,items);
+    setStatus(`Loaded <b>${items.length}</b> repair estimates for <b>${v.year} ${v.make} ${v.model}</b>.`,'ok');
+  }catch(e){
+    $('estCard').style.display='none';
+    setStatus('Vehicle class set. Repair estimates unavailable (check Worker / credits).','err');
+  }
+}
+
+function parseEstimates(j){
+  const d=(j&&j.data)||j||{};
+  S.estTrim=d.trim||'';
+  // Shape A — repair-type ranges (Parts/Labor low+high)
+  let grp=null;
+  if(d.data&&Array.isArray(d.data.repair)){grp=d.data.repair[0]; S.estTrim=d.data.trim||S.estTrim;}
+  else if(Array.isArray(d.repair)){grp=d.repair[0];}
+  if(grp&&Array.isArray(grp.repair)){
+    if(grp.trim)S.estTrim=grp.trim;
+    const items=grp.repair.map(it=>{
+      const c=Array.isArray(it.costs)?it.costs:[];
+      const f=n=>c.find(x=>String(x.name||'').toLowerCase()===n)||{};
+      const p=f('parts'),l=f('labor');
+      const pl=+p.low||0,ph=+p.high||0,ll=+l.low||0,lh=+l.high||0;
+      return {title:it.title||it.value||'Repair',plo:pl,phi:ph,llo:ll,lhi:lh,tlo:pl+ll,thi:ph+lh};
+    }).filter(x=>x.thi>0);
+    if(items.length) return items;
+  }
+  // Shape B — mileage-interval maintenance (single costs) → per-service min–max range
+  const byMile=Array.isArray(d.data)?d.data:(Array.isArray(d)?d:null);
+  if(byMile){
+    S.estTrim=d.trim||S.estTrim;
+    const map={};
+    byMile.forEach(blk=>(blk.items||[]).forEach(it=>{
+      (it.parts||[]).forEach(p=>{const t=p.type||'Part';(map[t]=map[t]||{p:[],l:[]}).p.push(+p.total_cost||0);});
+      (it.labor||[]).forEach(l=>{const t=l.type||'Labor';(map[t]=map[t]||{p:[],l:[]}).l.push(+l.total_cost||0);});
+    }));
+    const items=Object.keys(map).map(t=>{
+      const o=map[t];
+      const pl=o.p.length?Math.min(...o.p):0,ph=o.p.length?Math.max(...o.p):0;
+      const ll=o.l.length?Math.min(...o.l):0,lh=o.l.length?Math.max(...o.l):0;
+      return {title:t,plo:Math.round(pl),phi:Math.round(ph),llo:Math.round(ll),lhi:Math.round(lh),
+        tlo:Math.round(pl+ll),thi:Math.round(ph+lh)};
+    }).filter(x=>x.thi>0).sort((a,b)=>b.thi-a.thi);
+    if(items.length) return items;
+  }
+  return [];
+}
+
+/* Estimate lookup by year/make/model/trim (no VIN needed) */
+async function fetchEstimatesYMMT(year,make,model,trim){
+  if(!WORKER_URL){ setStatus('Connect the estimate data source (Worker) first.','err'); return; }
+  const v={year,make,model};
+  setStatus('<span class="spin"></span>Pulling repair estimates…');
+  try{
+    const u=`${WORKER_URL}?year=${encodeURIComponent(year)}&make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&trim=${encodeURIComponent(trim||'base')}`;
+    const r=await fetch(u); const j=await r.json();
+    if(!r.ok||j.error) throw new Error(j.error||('http '+r.status));
+    const items=parseEstimates(j);
+    if(!items.length) throw new Error('no estimate data');
+    renderEstimates(v,items);
+    setStatus(`Loaded <b>${items.length}</b> repair estimates for <b>${year} ${make} ${model}</b>.`,'ok');
+  }catch(e){
+    $('estCard').style.display='none';
+    setStatus('No estimates found for that vehicle — try a different trim, or use a VIN.','err');
+  }
+}
+
+function renderEstimates(v,items){
+  S.estItems=items;
+  const trim=S.estTrim?` · ${S.estTrim}`:'';
+  $('estVeh').textContent=`${v.year} ${v.make} ${v.model}`;
+  $('estTrim').textContent=trim;
+  // populate claim-check dropdown
+  $('ccPick').innerHTML='<option value="">Select a repair to check a claim…</option>'+
+    items.map((x,i)=>`<option value="${i}">${esc(x.title)}</option>`).join('');
+  $('ccAmt').value=''; $('ccResult').className='cc-result'; $('ccResult').innerHTML='';
+  drawEstimates(items);
+  $('estCard').style.display='block';
+}
+
+function compareClaim(){
+  const r=$('ccResult'); const idx=$('ccPick').value;
+  if(idx===''){ r.className='cc-result'; r.innerHTML=''; return; }
+  const x=S.estItems[+idx];
+  const fair=`Fair total <b>$${x.tlo}–$${x.thi}</b> &nbsp;<span class="cc-split">(parts $${x.plo}–$${x.phi} · labor $${x.llo}–$${x.lhi})</span>`;
+  const amt=parseFloat($('ccAmt').value);
+  if(isNaN(amt)||amt<=0){ r.className='cc-result show neutral'; r.innerHTML=fair; return; }
+  let cls,verdict;
+  if(amt>x.thi){ const o=amt-x.thi, p=Math.round(o/x.thi*100);
+    cls='over'; verdict=`Claim $${amt.toFixed(0)} is <b>$${o.toFixed(0)} (${p}%) above</b> the fair high`; }
+  else if(amt<x.tlo){ const u=x.tlo-amt;
+    cls='under'; verdict=`Claim $${amt.toFixed(0)} is <b>$${u.toFixed(0)} below</b> the fair low`; }
+  else { cls='within'; verdict=`Claim $${amt.toFixed(0)} is <b>within the fair range</b>`; }
+  r.className='cc-result show '+cls;
+  r.innerHTML=`<span class="cc-verdict">${verdict}</span><span class="cc-fair">${fair}</span>`;
+}
+
+function drawEstimates(items){
+  const el=$('estBody');
+  if(!items.length){ el.innerHTML=`<div class="empty">No matching repairs.</div>`; return; }
+  el.innerHTML=items.map(x=>{
+    const gi=S.estItems.indexOf(x);
+    return `
+    <div class="est-row" onclick="selectClaim(${gi})" title="Check a claim against this repair">
+      <div class="est-name">${esc(x.title)}</div>
+      <div class="est-c" data-l="Parts">${x.phi?`$${x.plo}–$${x.phi}`:'—'}</div>
+      <div class="est-c" data-l="Labor">${x.lhi?`$${x.llo}–$${x.lhi}`:'—'}</div>
+      <div class="est-c est-tot" data-l="Total">$${x.tlo}–$${x.thi}</div>
+    </div>`;}).join('');
+}
+
+function filterEstimates(q){
+  q=(q||'').toLowerCase().trim();
+  const f=!q?S.estItems:S.estItems.filter(x=>x.title.toLowerCase().includes(q));
+  drawEstimates(f);
+}
+
+function selectClaim(i){
+  if(i<0) return;
+  $('ccPick').value=i; compareClaim();
+  $('ccAmt').focus();
+  $('claimCheck')&&$('claimCheck').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
 
 /* ============ Main search ============ */
 $('searchBtn').onclick = runSearch;
@@ -634,6 +854,43 @@ function sampleShops(lat,lng){
     return{name:nm,kind:k,dist:d,addr:'Sample facility · deploy for live data',phone:'',
       lat:lat+dl*Math.cos(ang),lng:lng+dl*Math.sin(ang)/Math.cos(lat*Math.PI/180)};});
 }
+
+/* ============ Year/Make/Model/Trim picker (estimates without a VIN) ============ */
+const YMMT_MAKES=['Acura','Audi','BMW','Buick','Cadillac','Chevrolet','Chrysler','Dodge','Fiat','Ford','GMC','Genesis','Honda','Hyundai','Infiniti','Jaguar','Jeep','Kia','Land Rover','Lexus','Lincoln','Mazda','Mercedes-Benz','Mini','Mitsubishi','Nissan','Porsche','Ram','Subaru','Tesla','Toyota','Volkswagen','Volvo'];
+
+function toggleYmmt(){
+  const b=$('ymmtBox'), link=$('ymmtLink');
+  const open=b.style.display==='none';
+  b.style.display=open?'flex':'none';
+  link.textContent=open?'Hide vehicle lookup':'No VIN? Estimate by year / make / model →';
+}
+async function loadYmmtModels(){
+  const yr=$('yYear').value, mk=$('yMake').value, sel=$('yModel');
+  if(!yr||!mk){ sel.innerHTML='<option value="">Select year &amp; make first</option>'; return; }
+  sel.innerHTML='<option value="">Loading models…</option>';
+  try{
+    const r=await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeYear/make/${encodeURIComponent(mk)}/modelyear/${yr}?format=json`);
+    const j=await r.json();
+    const models=[...new Set((j.Results||[]).map(x=>x.Model_Name).filter(Boolean))].sort();
+    sel.innerHTML = models.length
+      ? '<option value="">Select model…</option>'+models.map(m=>`<option>${esc(m)}</option>`).join('')
+      : '<option value="">No models found</option>';
+  }catch(e){ sel.innerHTML='<option value="">Could not load models</option>'; }
+}
+function ymmtGo(){
+  const yr=$('yYear').value, mk=$('yMake').value, md=$('yModel').value, tr=$('yTrim').value.trim();
+  if(!yr||!mk||!md){ setStatus('Pick a year, make, and model.','err'); return; }
+  fetchEstimatesYMMT(yr,mk,md,tr);
+}
+(function initYmmt(){
+  const ySel=$('yYear'); if(!ySel) return;
+  let y='<option value="">Year</option>';
+  for(let v=2025; v>=1991; v--) y+=`<option>${v}</option>`;
+  ySel.innerHTML=y;
+  $('yMake').innerHTML='<option value="">Make</option>'+YMMT_MAKES.map(m=>`<option>${m}</option>`).join('');
+  ySel.addEventListener('change',loadYmmtModels);
+  $('yMake').addEventListener('change',loadYmmtModels);
+})();
 </script>
 </body>
 </html>
