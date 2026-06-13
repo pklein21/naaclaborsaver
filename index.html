@@ -54,6 +54,18 @@
   .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
     box-shadow:var(--shadow);padding:20px;margin:22px 0}
   .fields{display:grid;grid-template-columns:1.1fr 1.4fr;gap:18px}
+  .methods{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
+  .method{display:flex;flex-direction:column;gap:11px;background:#fbfdff;
+    border:1px solid var(--line-soft);border-radius:13px;padding:15px 15px 16px}
+  .method input[type=text]{flex:0 0 auto;width:100%}
+  .method .mbtn{width:100%;padding:12px 14px}
+  .mlabel{font-size:12px;color:var(--muted);line-height:1.35}
+  .mlabel b{display:block;font-family:'Sora',sans-serif;font-weight:700;font-size:14.5px;
+    color:var(--ink);margin-bottom:2px;letter-spacing:.01em}
+  .ymmt-selects{display:flex;flex-direction:column;gap:8px}
+  .ymmt-selects select{width:100%;font-family:'Inter',sans-serif;font-size:14px;padding:11px 12px;
+    border:1.5px solid var(--royal);border-radius:10px;background:#fbfdff;color:var(--ink)}
+  .ymmt-selects select:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-soft)}
   .field label{display:block;font-family:'JetBrains Mono',monospace;font-size:11px;
     letter-spacing:.1em;text-transform:uppercase;color:var(--ink);font-weight:600;margin:0 0 7px}
   .inrow{display:flex;gap:9px}
@@ -66,17 +78,8 @@
   .divider span{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);
     text-transform:uppercase;letter-spacing:.1em}
 
-  .controls{display:flex;flex-wrap:wrap;gap:22px;margin-top:18px;align-items:flex-end}
+  .opts{display:flex;flex-wrap:wrap;gap:26px;margin-top:18px;align-items:flex-end}
   .ctl{display:flex;flex-direction:column;gap:7px}
-  .ymmt-toggle{margin-top:13px}
-  .ymmt-toggle a{font-size:13px;color:var(--royal);cursor:pointer;font-weight:500}
-  .ymmt-toggle a:hover{color:var(--cyan);text-decoration:underline}
-  .ymmt{display:flex;flex-wrap:wrap;gap:9px;margin-top:11px;align-items:center}
-  .ymmt select,.ymmt input{font-family:'Inter',sans-serif;font-size:13.5px;padding:9px 11px;
-    border:1.5px solid var(--line);border-radius:8px;background:#fbfdff;color:var(--ink)}
-  .ymmt select:focus,.ymmt input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-soft)}
-  #yYear{width:92px}#yMake{min-width:128px}#yModel{min-width:150px;flex:1}#yTrim{width:128px}
-  .ymmt #yGo{padding:9px 18px;font-size:14px}
   .ctl > span{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;
     text-transform:uppercase;color:var(--ink);font-weight:600}
   .chips{display:flex;gap:7px}
@@ -235,6 +238,7 @@
     .hbar{gap:8px;padding:16px 0}
     .apptitle{font-size:30px;text-align:center;width:100%}
     .fields{grid-template-columns:1fr}
+    .methods{grid-template-columns:1fr}
     .divider{display:none}
     .results{grid-template-columns:1fr}
     .readout .big{font-size:38px}
@@ -258,36 +262,31 @@
   </div>
 
   <div class="panel">
-    <div class="fields">
-      <div class="field">
-        <label>ZIP code</label>
-        <div class="inrow">
-          <input id="zip" type="text" inputmode="numeric" maxlength="5" placeholder="e.g. 75071" autocomplete="off">
-        </div>
+    <div class="methods">
+      <div class="method">
+        <div class="mlabel"><b>By ZIP code</b>labor rate &amp; nearby shops</div>
+        <input id="zip" type="text" inputmode="numeric" maxlength="5" placeholder="e.g. 75071" autocomplete="off">
+        <button id="searchBtn" class="run mbtn" type="button">Search rates &amp; shops</button>
       </div>
-      <div class="field">
-        <label>VIN <span style="color:var(--muted);text-transform:none;letter-spacing:0">— auto-detects vehicle class</span></label>
-        <div class="inrow">
-          <input id="vin" type="text" maxlength="17" placeholder="17-digit VIN (optional)" autocomplete="off" style="text-transform:uppercase">
-          <button id="decodeBtn" class="run ghost" type="button">Decode</button>
+      <div class="method">
+        <div class="mlabel"><b>By VIN</b>decode &amp; repair estimates</div>
+        <input id="vin" type="text" maxlength="17" placeholder="17-digit VIN" autocomplete="off" style="text-transform:uppercase">
+        <button id="decodeBtn" class="run mbtn" type="button">VIN Decode</button>
+      </div>
+      <div class="method">
+        <div class="mlabel"><b>By year / make / model</b>repair estimates</div>
+        <div class="ymmt-selects">
+          <select id="yYear"></select>
+          <select id="yMake"></select>
+          <select id="yModel"><option value="">Model</option></select>
         </div>
+        <button id="yGo" class="run mbtn" type="button" onclick="ymmtGo()">Get estimates</button>
       </div>
     </div>
 
-    <div class="ymmt-toggle">
-      <a id="ymmtLink" onclick="toggleYmmt()">No VIN? Estimate by year / make / model →</a>
-    </div>
-    <div class="ymmt" id="ymmtBox" style="display:none">
-      <select id="yYear"></select>
-      <select id="yMake"></select>
-      <select id="yModel"><option value="">Model</option></select>
-      <input id="yTrim" type="text" placeholder="Trim (optional)" autocomplete="off">
-      <button class="run ghost" id="yGo" onclick="ymmtGo()">Get estimates</button>
-    </div>
-
-    <div class="controls">
+    <div class="opts">
       <div class="ctl">
-        <span>Search radius</span>
+        <span>Shop radius</span>
         <div class="chips" id="radius">
           <div class="chip" data-r="25">25 mi</div>
           <div class="chip on" data-r="50">50 mi</div>
@@ -303,8 +302,6 @@
           <div class="chip" data-v="ev">Electric</div>
         </div>
       </div>
-      <div class="grow"></div>
-      <button id="searchBtn" class="run" type="button">Search rates &amp; shops</button>
     </div>
 
     <div class="vehcard" id="vehcard"></div>
@@ -326,7 +323,7 @@
       <div>Repair</div><div class="est-c">Parts</div><div class="est-c">Labor</div><div class="est-c">Total</div>
     </div>
     <div class="est-list" id="estBody"></div>
-    <div class="est-note">Fair-market parts + labor ranges · mechanical repairs only · national typical (not ZIP-specific). Source: Vehicle Databases.</div>
+    <div class="est-note" id="estNote">Fair-market parts + labor ranges &middot; mechanical repairs only. Source: Vehicle Databases.</div>
   </div>
 
   <div class="results" id="results" style="display:none">
@@ -702,6 +699,27 @@ async function fetchEstimates(vin,v){
 function parseEstimates(j){
   const d=(j&&j.data)||j||{};
   S.estTrim=d.trim||'';
+  S.estSrcNote='';
+  // Shape C — vehicle-repairs/v2: repair[].costs.{independent|dealer}[] with part/labor/total
+  if(Array.isArray(d.repair) && d.repair[0] && d.repair[0].costs && !Array.isArray(d.repair[0].repair)){
+    let usedDealer=false;
+    const items=d.repair.map(it=>{
+      const c=it.costs||{};
+      const indep=Array.isArray(c.independent)&&c.independent.length;
+      const arr=indep?c.independent:(Array.isArray(c.dealer)?c.dealer:[]);
+      if(!indep && arr.length) usedDealer=true;
+      const f=n=>arr.find(x=>String(x.name||'').toLowerCase()===n)||{};
+      const p=f('part'),l=f('labor'),t=f('total');
+      const plo=+p.low||0,phi=+p.high||0,llo=+l.low||0,lhi=+l.high||0;
+      const tlo=(t.low!=null?+t.low:plo+llo),thi=(t.high!=null?+t.high:phi+lhi);
+      return {title:it.title||'Repair',plo,phi,llo,lhi,tlo,thi};
+    }).filter(x=>x.thi>0);
+    if(items.length){
+      S.estSrcNote = usedDealer ? 'Ranges are independent-shop where available, otherwise dealership.'
+                                : 'Ranges reflect independent-shop pricing.';
+      return items;
+    }
+  }
   // Shape A — repair-type ranges (Parts/Labor low+high)
   let grp=null;
   if(d.data&&Array.isArray(d.data.repair)){grp=d.data.repair[0]; S.estTrim=d.data.trim||S.estTrim;}
@@ -739,12 +757,12 @@ function parseEstimates(j){
 }
 
 /* Estimate lookup by year/make/model/trim (no VIN needed) */
-async function fetchEstimatesYMMT(year,make,model,trim){
+async function fetchEstimatesYMMT(year,make,model){
   if(!WORKER_URL){ setStatus('Connect the estimate data source (Worker) first.','err'); return; }
   const v={year,make,model};
   setStatus('<span class="spin"></span>Pulling repair estimates…');
   try{
-    const u=`${WORKER_URL}?year=${encodeURIComponent(year)}&make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&trim=${encodeURIComponent(trim||'base')}`;
+    const u=`${WORKER_URL}?year=${encodeURIComponent(year)}&make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}`;
     const r=await fetch(u); const j=await r.json();
     if(!r.ok||j.error) throw new Error(j.error||('http '+r.status));
     const items=parseEstimates(j);
@@ -766,6 +784,7 @@ function renderEstimates(v,items){
   $('ccPick').innerHTML='<option value="">Select a repair to check a claim…</option>'+
     items.map((x,i)=>`<option value="${i}">${esc(x.title)}</option>`).join('');
   $('ccAmt').value=''; $('ccResult').className='cc-result'; $('ccResult').innerHTML='';
+  $('estNote').innerHTML = `Fair-market parts + labor ranges &middot; mechanical repairs only. ${S.estSrcNote||''} Source: Vehicle Databases.`;
   drawEstimates(items);
   $('estCard').style.display='block';
 }
@@ -858,12 +877,7 @@ function sampleShops(lat,lng){
 /* ============ Year/Make/Model/Trim picker (estimates without a VIN) ============ */
 const YMMT_MAKES=['Acura','Audi','BMW','Buick','Cadillac','Chevrolet','Chrysler','Dodge','Fiat','Ford','GMC','Genesis','Honda','Hyundai','Infiniti','Jaguar','Jeep','Kia','Land Rover','Lexus','Lincoln','Mazda','Mercedes-Benz','Mini','Mitsubishi','Nissan','Porsche','Ram','Subaru','Tesla','Toyota','Volkswagen','Volvo'];
 
-function toggleYmmt(){
-  const b=$('ymmtBox'), link=$('ymmtLink');
-  const open=b.style.display==='none';
-  b.style.display=open?'flex':'none';
-  link.textContent=open?'Hide vehicle lookup':'No VIN? Estimate by year / make / model →';
-}
+function toggleYmmt(){ /* picker is always visible now */ }
 async function loadYmmtModels(){
   const yr=$('yYear').value, mk=$('yMake').value, sel=$('yModel');
   if(!yr||!mk){ sel.innerHTML='<option value="">Select year &amp; make first</option>'; return; }
@@ -878,9 +892,9 @@ async function loadYmmtModels(){
   }catch(e){ sel.innerHTML='<option value="">Could not load models</option>'; }
 }
 function ymmtGo(){
-  const yr=$('yYear').value, mk=$('yMake').value, md=$('yModel').value, tr=$('yTrim').value.trim();
+  const yr=$('yYear').value, mk=$('yMake').value, md=$('yModel').value;
   if(!yr||!mk||!md){ setStatus('Pick a year, make, and model.','err'); return; }
-  fetchEstimatesYMMT(yr,mk,md,tr);
+  fetchEstimatesYMMT(yr,mk,md);
 }
 (function initYmmt(){
   const ySel=$('yYear'); if(!ySel) return;
