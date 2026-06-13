@@ -420,6 +420,14 @@ function drawGauge(val){
 const GOOGLE_KEY = 'AIzaSyAu5fEIkaeNvEj7Nce8UVAAzdi53AFm8-o';
 let SHOP_SOURCE = 'Google Places';
 
+// Exclude collision / auto-body / dent / paint shops — mechanical facilities only
+const COLLISION_RE = /(collision|auto\s*body|autobody|body\s*shop|bodyshop|body\s*works?|bodyworks|body\s*&|&\s*body|paint\s*(?:&|and)\s*body|paintless|\bdent\b|\bding\b|bumper|windshield|auto\s*glass)/i;
+function isCollision(name, types){
+  if(COLLISION_RE.test(name||'')) return true;
+  if(Array.isArray(types) && types.some(t=>{const s=String(t);return s.includes('body')||s.includes('paint');})) return true;
+  return false;
+}
+
 async function fetchShops(lat,lng,radiusMi){
   try{
     const g = await fetchShopsGoogle(lat,lng,radiusMi);
@@ -453,10 +461,12 @@ async function fetchShopsGoogle(lat,lng,radiusMi){
       const loc=p.location||{}; if(loc.latitude==null) return;
       if(p.businessStatus && p.businessStatus!=='OPERATIONAL') return;
       const types=p.types||[];
+      const nm=(p.displayName&&p.displayName.text)||'Repair facility';
+      if(isCollision(nm,types)) return;   // drop collision/body/dent
       let kind='Repair';
       if(types.includes('car_dealer')) kind='Dealer';
       else if(types.some(t=>String(t).includes('tire'))) kind='Tires';
-      out.push({ name:(p.displayName&&p.displayName.text)||'Repair facility',
+      out.push({ name:nm,
         lat:loc.latitude, lng:loc.longitude, phone:p.nationalPhoneNumber||'',
         addr:p.formattedAddress||'', kind,
         rating:(typeof p.rating==='number')?p.rating:null,
@@ -484,7 +494,12 @@ async function fetchShopsOSM(lat,lng,radiusMi){
   const r=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:q});
   if(!r.ok) throw new Error('shop service unavailable');
   const j=await r.json();
-  return j.elements.filter(e=>e.tags&&e.tags.name).map(e=>{
+  return j.elements.filter(e=>e.tags&&e.tags.name)
+    .filter(e=>{const t=e.tags;
+      if(isCollision(t.name)) return false;
+      if(t['service:vehicle:body_repair']==='yes'||t['service:vehicle:painting']==='yes') return false;
+      return true;})
+    .map(e=>{
     const t=e.tags, ad=[t['addr:housenumber'],t['addr:street'],t['addr:city']].filter(Boolean).join(' ');
     return { name:t.name, lat:e.lat, lng:e.lon, phone:t.phone||t['contact:phone']||'', addr:ad,
       kind:t.shop==='tyres'?'Tires':t.shop==='car'?'Dealer':'Repair',
